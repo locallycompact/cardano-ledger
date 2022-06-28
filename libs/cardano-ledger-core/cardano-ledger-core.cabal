@@ -77,7 +77,6 @@ library
     cardano-crypto-wrapper,
     cardano-data,
     cardano-ledger-byron,
-    cardano-prelude,
     cardano-slotting,
     containers,
     data-default-class,
