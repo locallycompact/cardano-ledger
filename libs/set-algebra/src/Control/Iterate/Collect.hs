@@ -66,7 +66,7 @@ instance Foldable Collect where
 -- | A (Collect t) is completely agnostic over how 't's are beging collected.
 -- We can make this abstraction concrete by using fixAction.
 fixAction :: Collect tuple -> ans -> (tuple -> ans -> ans) -> ans
-fixAction = runCollect
+fixAction = \x -> runCollect x
 
 mapify :: Ord a => Collect (a, b) -> Map.Map a b
 mapify m = runCollect m Map.empty (\(a, b) ans -> Map.insert a b ans)
