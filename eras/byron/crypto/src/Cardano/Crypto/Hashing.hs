@@ -119,7 +119,7 @@ instance ToJSON (AbstractHash algo a) where
   toJSON = toJSON . sformat hashHexF
 
 instance HashAlgorithm algo => FromJSON (AbstractHash algo a) where
-  parseJSON = toAesonError . readEither <=< parseJSON
+  parseJSON = toAesonError . (readEither :: [Char] -> Either [Char] (AbstractHash algo a)) <=< parseJSON
 
 instance
   (HashAlgorithm algo, FromJSON (AbstractHash algo a)) =>
