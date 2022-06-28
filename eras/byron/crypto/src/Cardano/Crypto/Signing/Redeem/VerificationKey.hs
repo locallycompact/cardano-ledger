@@ -31,6 +31,7 @@ import Data.Aeson
     FromJSONKeyFunction (..),
     ToJSONKey (..),
     ToJSONKeyFunction (..),
+    ToJSON(..),
   )
 import qualified Data.Aeson.Encoding.Internal as A (key)
 import qualified Data.Aeson.Key as A
@@ -85,23 +86,6 @@ instance Monad m => ToObjectKey m RedeemVerificationKey where
 instance MonadError SchemaError m => FromObjectKey m RedeemVerificationKey where
   fromObjectKey =
     fmap Just . parseJSString (first (sformat build) . fromAvvmVK) . JSString
-
-instance ToJSONKey RedeemVerificationKey where
-  toJSONKey = ToJSONKeyText render (A.key . render)
-    where
-      render = A.fromText . sformat redeemVKB64UrlF
-
-instance FromJSONKey RedeemVerificationKey where
-  fromJSONKey =
-    FromJSONKeyTextParser $ toAesonError . first (sformat build) . fromAvvmVK
-  fromJSONKeyList =
-    FromJSONKeyTextParser $
-      toAesonError
-        . bimap (sformat build) pure
-        . fromAvvmVK
-
-instance B.Buildable RedeemVerificationKey where
-  build = bprint ("redeem_vk:" . redeemVKB64F)
 
 fromVerificationKeyToByteString :: Ed25519.PublicKey -> BS.ByteString
 fromVerificationKeyToByteString = BA.convert
@@ -164,3 +148,20 @@ instance B.Buildable AvvmVKError where
         len
 
 deriveJSON defaultOptions ''RedeemVerificationKey
+
+instance ToJSONKey RedeemVerificationKey where
+  toJSONKey = ToJSONKeyText render (A.key . render)
+    where
+      render = A.fromText . sformat redeemVKB64UrlF
+
+instance FromJSONKey RedeemVerificationKey where
+  fromJSONKey =
+    FromJSONKeyTextParser $ toAesonError . first (sformat build) . fromAvvmVK
+  fromJSONKeyList =
+    FromJSONKeyTextParser $
+      toAesonError
+        . bimap (sformat build) pure
+        . fromAvvmVK
+
+instance B.Buildable RedeemVerificationKey where
+  build = bprint ("redeem_vk:" . redeemVKB64F)
